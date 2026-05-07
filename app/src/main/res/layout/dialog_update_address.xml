@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ubah Alamat"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Provinsi"
+        android:textStyle="bold" />
+    <Spinner
+        android:id="@+id/spinnerDialogProvinsi"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kabupaten"
+        android:textStyle="bold" />
+    <Spinner
+        android:id="@+id/spinnerDialogKabupaten"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daerah/Kecamatan"
+        android:textStyle="bold" />
+    <Spinner
+        android:id="@+id/spinnerDialogDaerah"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Detail Alamat"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etDialogAlamat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="Masukkan alamat lengkap..."
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/btnDialogUbah"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="SIMPAN PERUBAHAN"
+        android:backgroundTint="@color/Green" />
+</LinearLayout>
