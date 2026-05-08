@@ -1,5 +1,6 @@
 package com.example.petanikita;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOGIN_URL = "http://10.0.2.2:5000/api/Auth/login";
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         client = new OkHttpClient();
 
         etUsername = findViewById(R.id.editTextTextUsernameLogin);
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString().trim();
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Username dan Password tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                    showAlertDialog("Peringatan", "Username dan Password tidak boleh kosong", false);
                     return;
                 }
 
@@ -75,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 btnLogin.setText("Loading...");
 
                 performLogin(username, password);
-
             }
         });
+
         txtregister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void performLogin(String username, String password) {
         JSONObject jsonBody = new JSONObject();
         try {
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("API_ERROR", "Gagal menghubungi server", e);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Koneksi ke server gagal!", Toast.LENGTH_LONG).show();
+                    showAlertDialog("Error", "Koneksi ke server gagal!", false);
                     resetButton();
                 });
             }
@@ -130,22 +133,34 @@ public class MainActivity extends AppCompatActivity {
 
                             saveToken(token, role);
 
-                            Toast.makeText(MainActivity.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
-
-                             Intent intent = new Intent(MainActivity.this, MenuActivity.class);
-                            startActivity(intent);
-                             finish();
+                            showAlertDialog("Sukses", "Login Berhasil!", true);
 
                         } catch (JSONException e) {
                             Log.e("JSON_ERROR", "Gagal parsing JSON", e);
-                            Toast.makeText(MainActivity.this, "Format data tidak valid", Toast.LENGTH_SHORT).show();
+                            showAlertDialog("Error", "Format data tidak valid", false);
                         }
                     } else {
-                        Toast.makeText(MainActivity.this, "Username atau password salah!", Toast.LENGTH_SHORT).show();
+                        showAlertDialog("Login Gagal", "Username atau password salah!", false);
                     }
                 });
             }
         });
+    }
+
+    private void showAlertDialog(String title, String message, boolean navigateToMenu) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (navigateToMenu) {
+                        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void resetButton() {

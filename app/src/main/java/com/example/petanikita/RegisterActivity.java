@@ -1,5 +1,6 @@
 package com.example.petanikita;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -72,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String phone = etPhone.getText().toString().trim();
 
                 if (username.isEmpty() || fullName.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Semua kolom harus diisi!", Toast.LENGTH_SHORT).show();
+                    showAlertDialog("Peringatan", "Semua kolom harus diisi!", false);
                     return;
                 }
 
@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.e("API_ERROR", "Gagal menghubungi server", e);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(RegisterActivity.this, "Koneksi ke server gagal!", Toast.LENGTH_LONG).show();
+                    showAlertDialog("Error", "Koneksi ke server gagal!", false);
                     resetButton();
                 });
             }
@@ -132,14 +132,12 @@ public class RegisterActivity extends AppCompatActivity {
                     resetButton();
 
                     if (response.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Registrasi Berhasil! Silakan Login.", Toast.LENGTH_LONG).show();
-
-                        finish();
+                        showAlertDialog("Sukses", "Registrasi Berhasil! Silakan Login.", true);
                     } else {
                         try {
-                            Toast.makeText(RegisterActivity.this, responseData, Toast.LENGTH_LONG).show();
+                            showAlertDialog("Registrasi Gagal", responseData, false);
                         } catch (Exception e) {
-                            Toast.makeText(RegisterActivity.this, "Registrasi gagal, periksa kembali data Anda.", Toast.LENGTH_SHORT).show();
+                            showAlertDialog("Registrasi Gagal", "Periksa kembali data Anda.", false);
                         }
                     }
                 });
@@ -147,7 +145,20 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    // Fungsi untuk mengembalikan tampilan tombol ke semula
+    private void showAlertDialog(String title, String message, boolean finishOnOk) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (finishOnOk) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
     private void resetButton() {
         btnRegister.setEnabled(true);
         btnRegister.setText("SIGN UP");

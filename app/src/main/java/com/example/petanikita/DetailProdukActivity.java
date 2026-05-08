@@ -55,7 +55,6 @@ public class DetailProdukActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Inisialisasi UI
         tvName = findViewById(R.id.textViewNameDitailmenu);
         tvDeskripsi = findViewById(R.id.textViewDeskirpsi);
         tvPrice = findViewById(R.id.textViewPrice);
@@ -67,11 +66,9 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         client = new OkHttpClient();
 
-        // Ambil Token
         SharedPreferences prefs = getSharedPreferences("PetaniKitaApp", MODE_PRIVATE);
         token = prefs.getString("JWT_TOKEN", "");
 
-        // Ambil Product ID dari halaman Menu
         productId = getIntent().getIntExtra("PRODUCT_ID", -1);
         if (productId != -1) {
             loadProductDetail(productId);
@@ -80,7 +77,6 @@ public class DetailProdukActivity extends AppCompatActivity {
             finish();
         }
 
-        // Aksi Tombol Kurang (-)
         tvMin.setOnClickListener(v -> {
             if (currentQuantity > 1) {
                 currentQuantity--;
@@ -88,7 +84,6 @@ public class DetailProdukActivity extends AppCompatActivity {
             }
         });
 
-        // Aksi Tombol Tambah (+)
         tvPlus.setOnClickListener(v -> {
             if (currentQuantity < maxStock) {
                 currentQuantity++;
@@ -98,7 +93,6 @@ public class DetailProdukActivity extends AppCompatActivity {
             }
         });
 
-        // Aksi Tombol Add to Cart
         btnAddToCart.setOnClickListener(v -> addToCart());
     }
 
@@ -133,7 +127,6 @@ public class DetailProdukActivity extends AppCompatActivity {
 
                             maxStock = stock;
 
-                            // Jika stok habis, matikan tombol
                             if (maxStock == 0) {
                                 currentQuantity = 0;
                                 tvQuantity.setText("0");

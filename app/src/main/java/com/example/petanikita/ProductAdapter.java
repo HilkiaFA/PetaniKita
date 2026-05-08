@@ -11,9 +11,8 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
-    private OnItemClickListener listener; // Tambahkan ini
+    private OnItemClickListener listener;
 
-    // Buat Interface untuk klik
     public interface OnItemClickListener {
         void onItemClick(Product product);
     }
@@ -44,7 +43,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.tvPrice.setText("Rp " + String.format("%,.0f", product.getPrice()));
         holder.tvStock.setText(String.valueOf(product.getStock()));
 
-        // Tambahkan aksi klik pada setiap item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(product);

@@ -15,6 +15,15 @@
         android:theme="@style/Theme.PetaniKita"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".DetailHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HistoryPaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddressActivity"
             android:exported="false" />
         <activity

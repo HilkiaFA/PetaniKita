@@ -1,12 +1,13 @@
 package com.example.petanikita;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -31,7 +32,8 @@ import okhttp3.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPhone;
-    private Button btnEdit, btnSimpan, btnPetani,btnAdress;
+    private ImageView btnHistory;
+    private Button btnEdit, btnSimpan, btnPetani, btnAdress;
 
     private OkHttpClient client;
     private String token;
@@ -57,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnSimpan = findViewById(R.id.btn_simpan);
         btnAdress = findViewById(R.id.btn_alamat);
         btnPetani = findViewById(R.id.btn_petani);
+        btnHistory = findViewById(R.id.imageViewHistory);
 
         client = new OkHttpClient();
         btnPetani.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +77,20 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        btnHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, HistoryPaymentActivity.class);
+                startActivity(intent);
+            }
+        });
+
         SharedPreferences prefs = getSharedPreferences("PetaniKitaApp", MODE_PRIVATE);
         token = prefs.getString("JWT_TOKEN", "");
 
         if (token.isEmpty()) {
-            Toast.makeText(this, "Sesi Anda telah habis, silakan login kembali.", Toast.LENGTH_SHORT).show();
-            finish();
+            // Gunakan true agar Activity di-finish setelah tombol OK ditekan
+            showAlertDialog("Peringatan", "Sesi Anda telah habis, silakan login kembali.", true);
             return;
         }
 
@@ -103,7 +114,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
     private void setEditMode(boolean isEditable) {
         etFullName.setEnabled(isEditable);
         etEmail.setEnabled(isEditable);
@@ -112,7 +122,6 @@ public class ProfileActivity extends AppCompatActivity {
         btnEdit.setEnabled(!isEditable);
         btnSimpan.setEnabled(isEditable);
     }
-
 
     private void loadProfileData() {
         Request request = new Request.Builder()
@@ -124,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(() -> Toast.makeText(ProfileActivity.this, "Gagal memuat profil, periksa koneksi internet.", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> showAlertDialog("Error", "Gagal memuat profil, periksa koneksi internet.", false));
             }
 
             @Override
@@ -147,12 +156,11 @@ public class ProfileActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    runOnUiThread(() -> Toast.makeText(ProfileActivity.this, "Gagal mendapatkan data dari server.", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> showAlertDialog("Error", "Gagal mendapatkan data dari server.", false));
                 }
             }
         });
     }
-
 
     private void saveProfileData() {
         String fullName = etFullName.getText().toString().trim();
@@ -160,7 +168,7 @@ public class ProfileActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
 
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty()) {
-            Toast.makeText(this, "Semua kolom data diri harus diisi!", Toast.LENGTH_SHORT).show();
+            showAlertDialog("Peringatan", "Semua kolom data diri harus diisi!", false);
             return;
         }
 
@@ -178,7 +186,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
 
-
         Request request = new Request.Builder()
                 .url(PROFILE_URL)
                 .put(body)
@@ -190,7 +197,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ProfileActivity.this, "Gagal menyimpan data ke server.", Toast.LENGTH_SHORT).show();
+                    showAlertDialog("Error", "Gagal menyimpan data ke server.", false);
                     btnSimpan.setText("Simpan");
                     btnSimpan.setEnabled(true);
                 });
@@ -202,14 +209,28 @@ public class ProfileActivity extends AppCompatActivity {
                     btnSimpan.setText("Simpan");
 
                     if (response.isSuccessful()) {
-                        Toast.makeText(ProfileActivity.this, "Profil berhasil diperbarui!", Toast.LENGTH_SHORT).show();
+                        showAlertDialog("Sukses", "Profil berhasil diperbarui!", false);
                         setEditMode(false);
                     } else {
-                        Toast.makeText(ProfileActivity.this, "Gagal memperbarui profil. Periksa format data.", Toast.LENGTH_SHORT).show();
+                        showAlertDialog("Error", "Gagal memperbarui profil. Periksa format data.", false);
                         btnSimpan.setEnabled(true);
                     }
                 });
             }
         });
+    }
+
+    private void showAlertDialog(String title, String message, boolean finishOnOk) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (finishOnOk) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 }

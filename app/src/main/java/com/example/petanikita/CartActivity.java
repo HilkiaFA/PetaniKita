@@ -1,6 +1,7 @@
 package com.example.petanikita;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,7 +43,7 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter adapter;
     private OkHttpClient client;
     private String token;
-
+    private double currentGrandTotal = 0;
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
@@ -73,7 +74,11 @@ public class CartActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        btnBayar.setOnClickListener(v -> {
+            Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
+            intent.putExtra("GRAND_TOTAL", currentGrandTotal);
+            startActivity(intent);
+        });
         adapter = new CartAdapter(new ArrayList<>(), new CartAdapter.OnCartItemInteractionListener() {
             @Override
             public void onUpdateQuantity(CartItem item, int newQuantity) {
@@ -110,6 +115,7 @@ public class CartActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         JSONArray dataArray = jsonObject.getJSONArray("data");
+
                         double grandTotal = jsonObject.getDouble("grandTotal");
 
                         List<CartItem> cartItems = new ArrayList<>();
@@ -127,6 +133,7 @@ public class CartActivity extends AppCompatActivity {
                         }
 
                         runOnUiThread(() -> {
+                            currentGrandTotal = grandTotal;
                             adapter.updateData(cartItems);
                             tvGrandTotal.setText("Rp " + String.format("%,.0f", grandTotal));
 
@@ -137,6 +144,7 @@ public class CartActivity extends AppCompatActivity {
                     }
                 } else {
                     runOnUiThread(() -> {
+                        currentGrandTotal = 0;
                         adapter.updateData(new ArrayList<>());
                         tvGrandTotal.setText("Rp 0");
                         btnBayar.setEnabled(false);
