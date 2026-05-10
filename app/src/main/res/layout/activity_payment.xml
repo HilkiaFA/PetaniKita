@@ -11,11 +11,10 @@
         android:id="@+id/btn_bayar"
         android:layout_width="385dp"
         android:layout_height="48dp"
-        android:layout_marginTop="848dp"
+        android:layout_marginTop="740dp"
         android:backgroundTint="@color/Orange"
         android:text="Bayar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.615"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

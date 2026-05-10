@@ -17,7 +17,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         void onItemClick(Product product);
     }
 
-    // Update Constructor
     public ProductAdapter(List<Product> productList, OnItemClickListener listener) {
         this.productList = productList;
         this.listener = listener;

@@ -184,4 +184,24 @@
         app:layout_constraintTop_toBottomOf="@+id/textView19"
         tools:listitem="@layout/item_menu" />
 
+    <LinearLayout
+        android:id="@+id/pindahAddProduk"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="104dp"
+        android:background="@drawable/bg_green"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewmenu"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/outline_add_24" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.petanikita;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -66,6 +69,27 @@ public class MenuActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.editTextTextSearch);
         imageProfile = findViewById(R.id.imageViewProfile);
         imageCart = findViewById(R.id.imageViewcart);
+        LinearLayout btnAddProduk = findViewById(R.id.pindahAddProduk);
+        btnAddProduk.setVisibility(View.GONE);
+        TextView textGreeting = findViewById(R.id.textView11);
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        int hourOfDay = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+
+        if (hourOfDay >= 0 && hourOfDay < 11) {
+            textGreeting.setText("Selamat Pagi");
+        } else if (hourOfDay >= 11 && hourOfDay < 15) {
+            textGreeting.setText("Selamat Siang");
+        } else if (hourOfDay >= 15 && hourOfDay < 19) {
+            textGreeting.setText("Selamat Sore");
+        } else {
+            textGreeting.setText("Selamat Malam");
+        }
+        checkFarmerStatus(btnAddProduk);
+
+        btnAddProduk.setOnClickListener(v -> {
+            Intent intent = new Intent(MenuActivity.this, FarmerProfileActivity.class);
+            startActivity(intent);
+        });
 
         recyclerViewMenu.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(new ArrayList<>(), new ProductAdapter.OnItemClickListener() {
@@ -202,7 +226,32 @@ public class MenuActivity extends AppCompatActivity {
         });
     }
 
+    private void checkFarmerStatus(LinearLayout btnAddProduk) {
+        SharedPreferences prefs = getSharedPreferences("PetaniKitaApp", MODE_PRIVATE);
+        String token = prefs.getString("JWT_TOKEN", "");
 
+        Request request = new Request.Builder()
+                .url(BASE_URL + "Farmers/me")
+                .get()
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> btnAddProduk.setVisibility(View.VISIBLE));
+                } else {
+                    runOnUiThread(() -> btnAddProduk.setVisibility(View.GONE));
+                }
+                response.close();
+            }
+        });
+    }
     private void loadProvinces() {
         Request request = new Request.Builder().url(BASE_URL + "Wilayah/provinces").build();
         client.newCall(request).enqueue(new Callback() {

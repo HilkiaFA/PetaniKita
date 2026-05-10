@@ -15,6 +15,21 @@
         android:theme="@style/Theme.PetaniKita"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".TambahProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetailPenjualanActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PenjualanProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FarmerProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".DetailHistoryActivity"
             android:exported="false" />
         <activity
