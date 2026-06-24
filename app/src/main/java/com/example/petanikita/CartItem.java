@@ -8,8 +8,9 @@ public class CartItem {
     private int quantity;
     private double subTotal;
     private String farmName;
+    private String imageUrl;
 
-    public CartItem(int cartItemId, int productId, String productName, double price, int quantity, double subTotal, String farmName) {
+    public CartItem(int cartItemId, int productId, String productName, double price, int quantity, double subTotal, String farmName, String imageUrl) {
         this.cartItemId = cartItemId;
         this.productId = productId;
         this.productName = productName;
@@ -17,6 +18,7 @@ public class CartItem {
         this.quantity = quantity;
         this.subTotal = subTotal;
         this.farmName = farmName;
+        this.imageUrl = imageUrl;
     }
 
     public int getCartItemId() { return cartItemId; }
@@ -24,7 +26,7 @@ public class CartItem {
     public String getProductName() { return productName; }
     public double getPrice() { return price; }
     public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
     public double getSubTotal() { return subTotal; }
     public String getFarmName() { return farmName; }
+    public String getImageUrl() { return imageUrl; }
 }

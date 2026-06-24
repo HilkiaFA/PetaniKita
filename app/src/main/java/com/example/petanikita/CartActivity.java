@@ -44,7 +44,9 @@ public class CartActivity extends AppCompatActivity {
     private OkHttpClient client;
     private String token;
     private double currentGrandTotal = 0;
+
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
+    private static final String SERVER_URL = "http://10.0.2.2:5000";
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     @Override
@@ -74,11 +76,13 @@ public class CartActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         btnBayar.setOnClickListener(v -> {
             Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
             intent.putExtra("GRAND_TOTAL", currentGrandTotal);
             startActivity(intent);
         });
+
         adapter = new CartAdapter(new ArrayList<>(), new CartAdapter.OnCartItemInteractionListener() {
             @Override
             public void onUpdateQuantity(CartItem item, int newQuantity) {
@@ -94,7 +98,6 @@ public class CartActivity extends AppCompatActivity {
 
         loadCartData();
     }
-
 
     private void loadCartData() {
         Request request = new Request.Builder()
@@ -121,6 +124,13 @@ public class CartActivity extends AppCompatActivity {
                         List<CartItem> cartItems = new ArrayList<>();
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject obj = dataArray.getJSONObject(i);
+
+                            String imageUrlPath = obj.optString("imageUrl", "");
+                            String fullImageUrl = "";
+                            if (!imageUrlPath.isEmpty() && !imageUrlPath.equals("null")) {
+                                fullImageUrl = SERVER_URL + imageUrlPath;
+                            }
+
                             cartItems.add(new CartItem(
                                     obj.getInt("cartItemId"),
                                     obj.getInt("productId"),
@@ -128,7 +138,8 @@ public class CartActivity extends AppCompatActivity {
                                     obj.getDouble("price"),
                                     obj.getInt("quantity"),
                                     obj.getDouble("subTotal"),
-                                    obj.getString("farmName")
+                                    obj.getString("farmName"),
+                                    fullImageUrl // Masukkan url gambar
                             ));
                         }
 
@@ -153,7 +164,6 @@ public class CartActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void updateQuantityAPI(int cartItemId, int newQuantity) {
         JSONObject jsonBody = new JSONObject();
@@ -183,7 +193,6 @@ public class CartActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void showDeleteConfirmationDialog(CartItem item, int position) {
         new AlertDialog.Builder(this)

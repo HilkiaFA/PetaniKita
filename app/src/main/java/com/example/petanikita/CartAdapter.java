@@ -3,9 +3,14 @@ package com.example.petanikita;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
@@ -44,6 +49,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
         holder.tvSubtotal.setText("Rp " + String.format("%,.0f", item.getSubTotal()));
 
+        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(item.getImageUrl())
+                    .centerCrop()
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(holder.ivCartImage);
+        } else {
+            // Jika tidak ada gambar, kosongkan/transparent
+            holder.ivCartImage.setImageResource(android.R.color.transparent);
+        }
+
         holder.tvPlus.setOnClickListener(v -> {
             int newQty = item.getQuantity() + 1;
             if (listener != null) listener.onUpdateQuantity(item, newQty);
@@ -66,6 +83,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvFarmName, tvSubtotal, tvQuantity, tvPlus, tvMin;
+        ImageView ivCartImage;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +93,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             tvQuantity = itemView.findViewById(R.id.textViewQuatityCart);
             tvPlus = itemView.findViewById(R.id.textViewPlusCart);
             tvMin = itemView.findViewById(R.id.textViewMinCart);
+            ivCartImage = itemView.findViewById(R.id.imageViewCart);
         }
     }
 }

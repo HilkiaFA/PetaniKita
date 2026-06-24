@@ -16,14 +16,12 @@ import java.util.Locale;
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
     private List<OrderItem> orderList;
-    private OnItemClickListener listener; // 1. Tambahkan listener
+    private OnItemClickListener listener;
 
-    // 2. Buat Interface
     public interface OnItemClickListener {
         void onItemClick(OrderItem item);
     }
 
-    // 3. Update Constructor
     public OrderAdapter(List<OrderItem> orderList, OnItemClickListener listener) {
         this.orderList = orderList;
         this.listener = listener;

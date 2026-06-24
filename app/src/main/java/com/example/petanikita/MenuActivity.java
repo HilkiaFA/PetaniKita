@@ -47,6 +47,7 @@ public class MenuActivity extends AppCompatActivity {
     private OkHttpClient client;
 
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
+    private static final String SERVER_URL = "http://10.0.2.2:5000"; // URL root untuk gambar
 
     private int selectedProvinceId = 0;
     private int selectedRegencyId = 0;
@@ -72,6 +73,7 @@ public class MenuActivity extends AppCompatActivity {
         LinearLayout btnAddProduk = findViewById(R.id.pindahAddProduk);
         btnAddProduk.setVisibility(View.GONE);
         TextView textGreeting = findViewById(R.id.textView11);
+
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         int hourOfDay = calendar.get(java.util.Calendar.HOUR_OF_DAY);
 
@@ -84,6 +86,7 @@ public class MenuActivity extends AppCompatActivity {
         } else {
             textGreeting.setText("Selamat Malam");
         }
+
         checkFarmerStatus(btnAddProduk);
 
         btnAddProduk.setOnClickListener(v -> {
@@ -120,6 +123,7 @@ public class MenuActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         etSearch.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -206,12 +210,20 @@ public class MenuActivity extends AppCompatActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
+
+                            String imageUrlPath = obj.optString("imageUrl", "");
+                            String fullImageUrl = "";
+                            if (!imageUrlPath.isEmpty() && !imageUrlPath.equals("null")) {
+                                fullImageUrl = SERVER_URL + imageUrlPath;
+                            }
+
                             products.add(new Product(
                                     obj.getInt("productId"),
                                     obj.getString("productName"),
                                     obj.getString("farmName"),
                                     obj.getDouble("price"),
-                                    obj.getInt("stock")
+                                    obj.getInt("stock"),
+                                    fullImageUrl // Masukkan fullImageUrl ke constructor
                             ));
                         }
 
@@ -252,6 +264,7 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
     }
+
     private void loadProvinces() {
         Request request = new Request.Builder().url(BASE_URL + "Wilayah/provinces").build();
         client.newCall(request).enqueue(new Callback() {

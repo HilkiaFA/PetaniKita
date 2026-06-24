@@ -12,10 +12,12 @@ import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText etFullName, etEmail, etPhone;
     private ImageView btnHistory;
     private Button btnEdit, btnSimpan, btnPetani, btnAdress;
+    private CardView cardSeller;
 
     private OkHttpClient client;
     private String token;
@@ -60,8 +63,10 @@ public class ProfileActivity extends AppCompatActivity {
         btnAdress = findViewById(R.id.btn_alamat);
         btnPetani = findViewById(R.id.btn_petani);
         btnHistory = findViewById(R.id.imageViewHistory);
+        cardSeller = findViewById(R.id.cardSeller);
 
         client = new OkHttpClient();
+
         btnPetani.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         btnHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +95,6 @@ public class ProfileActivity extends AppCompatActivity {
         token = prefs.getString("JWT_TOKEN", "");
 
         if (token.isEmpty()) {
-            // Gunakan true agar Activity di-finish setelah tombol OK ditekan
             showAlertDialog("Peringatan", "Sesi Anda telah habis, silakan login kembali.", true);
             return;
         }
@@ -147,10 +152,32 @@ public class ProfileActivity extends AppCompatActivity {
                         String email = jsonObject.optString("email", "");
                         String phone = jsonObject.optString("phone", "");
 
+                        boolean isPetani = false;
+                        if (jsonObject.has("roles")) {
+                            JSONArray rolesArray = jsonObject.optJSONArray("roles");
+                            if (rolesArray != null) {
+                                for (int i = 0; i < rolesArray.length(); i++) {
+                                    String r = rolesArray.optString(i, "");
+                                    if (r.equalsIgnoreCase("Petani")) {
+                                        isPetani = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        final boolean finalIsPetani = isPetani;
+
                         runOnUiThread(() -> {
                             etFullName.setText(fullName);
                             etEmail.setText(email);
                             etPhone.setText(phone);
+
+                            if (finalIsPetani) {
+                                cardSeller.setVisibility(View.GONE);
+                            } else {
+                                cardSeller.setVisibility(View.VISIBLE);
+                            }
                         });
                     } catch (JSONException e) {
                         e.printStackTrace();

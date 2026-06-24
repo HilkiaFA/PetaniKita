@@ -108,7 +108,23 @@ public class PaymentActivity extends AppCompatActivity {
         setupPaymentSpinner();
         loadUserProfileAndLocations();
 
-        btnBayar.setOnClickListener(v -> processCheckout());
+        btnBayar.setOnClickListener(v -> showConfirmationDialog());
+    }
+
+    private void showConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Konfirmasi Pesanan")
+                .setMessage("Apakah pesanan Anda sudah benar?")
+                .setPositiveButton("Ya", (dialog, which) -> {
+                    // Jika user memilih "Ya", jalankan proses checkout
+                    processCheckout();
+                })
+                .setNegativeButton("Tidak", (dialog, which) -> {
+                    // Jika user memilih "Tidak", tutup dialog saja
+                    dialog.dismiss();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void setupPaymentSpinner() {

@@ -31,11 +31,12 @@ import okhttp3.Response;
 public class PenjualanProdukActivity extends AppCompatActivity {
 
     private RecyclerView rvPenjualan;
-    private ProductAdapter productAdapter; // Kita gunakan ulang ProductAdapter
+    private ProductAdapter productAdapter;
     private OkHttpClient client;
     private String token;
 
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
+    private static final String SERVER_URL = "http://10.0.2.2:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class PenjualanProdukActivity extends AppCompatActivity {
         productAdapter = new ProductAdapter(new ArrayList<>(), product -> {
             Intent intent = new Intent(PenjualanProdukActivity.this, DetailPenjualanActivity.class);
             intent.putExtra("PRODUCT_ID", product.getId());
-            intent.putExtra("PRODUCT_NAME", product.getName()); // <--- Cukup seperti ini
+            intent.putExtra("PRODUCT_NAME", product.getName());
             startActivity(intent);
         });
         rvPenjualan.setAdapter(productAdapter);
@@ -88,12 +89,20 @@ public class PenjualanProdukActivity extends AppCompatActivity {
                         List<Product> products = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
+
+                            String imageUrlPath = obj.optString("imageUrl", "");
+                            String fullImageUrl = "";
+                            if (!imageUrlPath.isEmpty() && !imageUrlPath.equals("null")) {
+                                fullImageUrl = SERVER_URL + imageUrlPath;
+                            }
+
                             products.add(new Product(
                                     obj.getInt("productId"),
                                     obj.getString("productName"),
                                     obj.getString("farmName"),
                                     obj.getDouble("price"),
-                                    obj.getInt("stock")
+                                    obj.getInt("stock"),
+                                    fullImageUrl
                             ));
                         }
                         runOnUiThread(() -> productAdapter.updateData(products));

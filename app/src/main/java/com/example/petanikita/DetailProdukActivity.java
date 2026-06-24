@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView; // Tambahan
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.bumptech.glide.Glide; // Tambahan Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy; // Tambahan Glide
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +37,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     private TextView tvName, tvDeskripsi, tvPrice, tvStock;
     private TextView tvMin, tvPlus, tvQuantity;
     private Button btnAddToCart;
+    private ImageView ivProductImage; // Variabel untuk ImageView
 
     private int productId;
     private int currentQuantity = 1;
@@ -42,6 +47,7 @@ public class DetailProdukActivity extends AppCompatActivity {
     private String token;
 
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
+    private static final String SERVER_URL = "http://10.0.2.2:5000";
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     @Override
@@ -63,6 +69,7 @@ public class DetailProdukActivity extends AppCompatActivity {
         tvPlus = findViewById(R.id.textViewPlus);
         tvQuantity = findViewById(R.id.textViewQuatity);
         btnAddToCart = findViewById(R.id.buttonaddtocart);
+        ivProductImage = findViewById(R.id.imageDetailProduk);
 
         client = new OkHttpClient();
 
@@ -119,6 +126,14 @@ public class DetailProdukActivity extends AppCompatActivity {
                         double price = obj.getDouble("price");
                         int stock = obj.getInt("stock");
 
+                        String imageUrlPath = obj.optString("imageUrl", "");
+                        String fullImageUrl = "";
+                        if (!imageUrlPath.isEmpty() && !imageUrlPath.equals("null")) {
+                            fullImageUrl = SERVER_URL + imageUrlPath;
+                        }
+
+                        final String finalImageUrl = fullImageUrl;
+
                         runOnUiThread(() -> {
                             tvName.setText(name);
                             tvDeskripsi.setText(desc);
@@ -126,6 +141,17 @@ public class DetailProdukActivity extends AppCompatActivity {
                             tvStock.setText(String.valueOf(stock));
 
                             maxStock = stock;
+
+                            if (!finalImageUrl.isEmpty()) {
+                                Glide.with(DetailProdukActivity.this)
+                                        .load(finalImageUrl)
+                                        .centerCrop()
+                                        .skipMemoryCache(true)
+                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                        .into(ivProductImage);
+                            } else {
+                                ivProductImage.setImageResource(android.R.color.transparent);
+                            }
 
                             if (maxStock == 0) {
                                 currentQuantity = 0;
@@ -186,7 +212,7 @@ public class DetailProdukActivity extends AppCompatActivity {
 
                     if (response.isSuccessful()) {
                         Toast.makeText(DetailProdukActivity.this, "Berhasil ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show();
-                        finish(); // Kembali ke menu utama
+                        finish();
                     } else {
                         Toast.makeText(DetailProdukActivity.this, "Gagal menambahkan produk.", Toast.LENGTH_SHORT).show();
                     }

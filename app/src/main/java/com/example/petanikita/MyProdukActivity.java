@@ -34,6 +34,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -48,6 +49,7 @@ public class MyProdukActivity extends AppCompatActivity {
     private String token;
 
     private static final String BASE_URL = "http://10.0.2.2:5000/api/";
+    private static final String SERVER_URL = "http://10.0.2.2:5000";
 
     private int selectedProvIdEdit = 0;
     private int selectedRegIdEdit = 0;
@@ -115,12 +117,20 @@ public class MyProdukActivity extends AppCompatActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
+
+                            String imageUrlPath = obj.optString("imageUrl", "");
+                            String fullImageUrl = "";
+                            if (!imageUrlPath.isEmpty() && !imageUrlPath.equals("null")) {
+                                fullImageUrl = SERVER_URL + imageUrlPath;
+                            }
+
                             products.add(new Product(
                                     obj.getInt("productId"),
                                     obj.getString("productName"),
                                     obj.getString("farmName"),
                                     obj.getDouble("price"),
-                                    obj.getInt("stock")
+                                    obj.getInt("stock"),
+                                    fullImageUrl
                             ));
                         }
 
@@ -217,32 +227,27 @@ public class MyProdukActivity extends AppCompatActivity {
                 return;
             }
 
-            JSONObject putData = new JSONObject();
-            try {
-                putData.put("productName", name);
-                putData.put("description", desc);
-                putData.put("price", price);
-                putData.put("stock", stock);
-                putData.put("provinceId", selectedProvIdEdit);
-                putData.put("regencyId", selectedRegIdEdit);
-                putData.put("districtId", selectedDistIdEdit);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("ProductName", name)
+                    .addFormDataPart("Description", desc)
+                    .addFormDataPart("Price", String.valueOf(price))
+                    .addFormDataPart("Stock", String.valueOf(stock))
+                    .addFormDataPart("ProvinceId", String.valueOf(selectedProvIdEdit))
+                    .addFormDataPart("RegencyId", String.valueOf(selectedRegIdEdit))
+                    .addFormDataPart("DistrictId", String.valueOf(selectedDistIdEdit));
 
-            updateProductApi(productId, putData, dialog);
+            RequestBody requestBody = multipartBuilder.build();
+            updateProductApi(productId, requestBody, dialog);
         });
 
         dialog.show();
     }
 
-    private void updateProductApi(int productId, JSONObject putData, AlertDialog dialog) {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(putData.toString(), JSON);
-
+    private void updateProductApi(int productId, RequestBody body, AlertDialog dialog) {
         Request request = new Request.Builder()
                 .url(BASE_URL + "Products/" + productId)
-                .put(body)
+                .put(body) // Body sekarang menggunakan MultipartBody
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
 
@@ -267,7 +272,6 @@ public class MyProdukActivity extends AppCompatActivity {
         });
     }
 
-
     private void loadEditProvinces(Spinner spinProv, Spinner spinReg, Spinner spinDist, int defProv, int defReg, int defDist) {
         Request request = new Request.Builder().url(BASE_URL + "Wilayah/provinces").build();
         client.newCall(request).enqueue(new Callback() {
@@ -287,14 +291,14 @@ public class MyProdukActivity extends AppCompatActivity {
                             JSONObject obj = jsonArray.getJSONObject(i);
                             int id = obj.getInt("provinceId");
                             list.add(new LocationItem(id, obj.getString("provinceName")));
-                            if (id == defProv) targetIndex = i + 1; // +1 karena ada "Pilih Provinsi"
+                            if (id == defProv) targetIndex = i + 1;
                         }
 
                         final int finalTargetIndex = targetIndex;
                         runOnUiThread(() -> {
                             ArrayAdapter<LocationItem> adapter = new ArrayAdapter<>(MyProdukActivity.this, android.R.layout.simple_spinner_dropdown_item, list);
                             spinProv.setAdapter(adapter);
-                            spinProv.setSelection(finalTargetIndex); // Otomatis pilih default
+                            spinProv.setSelection(finalTargetIndex);
 
                             spinProv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override

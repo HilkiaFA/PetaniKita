@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="32dp">
+        android:paddingBottom="40dp">
 
         <TextView
             android:id="@+id/tvTitleAdd"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
-            android:text="Tambah Produk Baru"
+            android:text="Tambah Produk"
             android:textColor="#333333"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -33,12 +33,63 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="4dp"
-            android:text="Masukkan detail hasil panen yang akan Anda jual."
+            android:text="Lengkapi detail dan foto hasil panen Anda."
             android:textColor="#777777"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitleAdd" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardAddImage"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubAdd">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#E9ECEF">
+
+                <ImageView
+                    android:id="@+id/ivProductImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:id="@+id/layoutImageHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@android:drawable/ic_menu_camera"
+                        app:tint="#888888" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Ketuk untuk tambah foto"
+                        android:textColor="#888888"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilProductName"
@@ -48,9 +99,13 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="24dp"
             android:hint="Nama Produk"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvSubAdd">
+            app:layout_constraintTop_toBottomOf="@+id/cardAddImage">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etAddProductName"
@@ -67,6 +122,10 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="16dp"
             android:hint="Deskripsi Produk"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilProductName">
@@ -75,6 +134,7 @@
                 android:id="@+id/etAddDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="top|start"
                 android:inputType="textMultiLine"
                 android:minLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -96,6 +156,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 android:hint="Harga (Rp)">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -111,6 +175,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 android:hint="Stok">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -145,7 +213,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeColor="#B0B0B0"
                 app:strokeWidth="1dp">
@@ -169,7 +237,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeColor="#B0B0B0"
                 app:strokeWidth="1dp">
@@ -192,7 +260,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="6dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeColor="#B0B0B0"
                 app:strokeWidth="1dp">
@@ -202,7 +270,6 @@
                     android:layout_height="match_parent"
                     android:paddingHorizontal="8dp" />
             </androidx.cardview.widget.CardView>
-
         </LinearLayout>
 
         <Button
@@ -212,7 +279,7 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/Green"
-            android:text="TAMBAH DATA"
+            android:text="SIMPAN PRODUK"
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="12dp"
